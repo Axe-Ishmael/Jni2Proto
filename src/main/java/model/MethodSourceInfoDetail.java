@@ -1,25 +1,37 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MethodSourceInfoDetail {
-    private HashMap<String,String> requestInfo = new HashMap<>(); // protoType : paramName ->  uint64:abc
 
-    private HashMap<String,String> responseInfo = new HashMap<>();
+    private String methodName = "";
+    private List<ParamTypePair> requestInfo = new ArrayList<>();//  <protoType : paramName> ->  uint64:abc
 
-    public HashMap<String, String> getRequestInfo() {
+    private List<ParamTypePair>  responseInfo = new ArrayList<>();
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
+    public List<ParamTypePair> getRequestInfo() {
         return requestInfo;
     }
 
-    public void setRequestInfo(HashMap<String, String> requestInfo) {
+    public void setRequestInfo(List<ParamTypePair> requestInfo) {
         this.requestInfo = requestInfo;
     }
 
-    public HashMap<String, String> getResponseInfo() {
+    public List<ParamTypePair> getResponseInfo() {
         return responseInfo;
     }
 
-    public void setResponseInfo(HashMap<String, String> responseInfo) {
+    public void setResponseInfo(List<ParamTypePair> responseInfo) {
         this.responseInfo = responseInfo;
     }
 }
