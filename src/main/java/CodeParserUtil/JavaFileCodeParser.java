@@ -33,7 +33,6 @@ public class JavaFileCodeParser {
         this.javaParser = new JavaParser();
     }
 
-//    public static JavaFileCodeParser getInstance(){return parser;}
 
     public void buildParsedInfoModel(String filePath){
         if (filePath == null || filePath.isEmpty()){

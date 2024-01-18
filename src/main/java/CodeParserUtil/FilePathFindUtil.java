@@ -4,6 +4,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 找到 message ABC 对应的文件的路径
+ */
 public class FilePathFindUtil {
 
     public static List<String> findImportPathOfMessage(String searchDirectoryPath,String messageName){
