@@ -3,6 +3,7 @@ package CodeParserUtil;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
+import model.ClassSourceInfoDetail;
 import model.MethodSourceInfoDetail;
 import model.ParamTypePair;
 import visitorImpl.InterfaceVisitorForBuildMap;
@@ -11,6 +12,7 @@ import visitorImpl.MethodVisitor;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class JavaFileCodeParser {
@@ -22,12 +24,16 @@ public class JavaFileCodeParser {
 
     public List<String> classNames = new ArrayList<>();
 
+    public HashSet<String> importItems = new HashSet<>();
+
+    public ClassSourceInfoDetail classSourceInfoDetail;
+
 
     public JavaFileCodeParser() {
         this.javaParser = new JavaParser();
     }
 
-    public static JavaFileCodeParser getInstance(){return parser;}
+//    public static JavaFileCodeParser getInstance(){return parser;}
 
     public void buildParsedInfoModel(String filePath){
         if (filePath == null || filePath.isEmpty()){
@@ -38,8 +44,9 @@ public class JavaFileCodeParser {
             File file = new File(filePath);
             ParseResult<CompilationUnit> parseResult = javaParser.parse(file);
             CompilationUnit cu = parseResult.getResult().get();
-            cu.accept(new InterfaceVisitorForBuildMap(classNames,callbackMap),null);
-            cu.accept(new MethodVisitor(callbackMap,methodSourceInfoDetailList),null);
+            cu.accept(new InterfaceVisitorForBuildMap(classNames,callbackMap,importItems),null);
+            cu.accept(new MethodVisitor(callbackMap,methodSourceInfoDetailList,importItems),null);
+            classSourceInfoDetail = new ClassSourceInfoDetail(classNames,methodSourceInfoDetailList);
 
             System.out.printf("");
         }catch (Exception e){
@@ -47,9 +54,6 @@ public class JavaFileCodeParser {
         }
 
     }
-
-
-
 
 
 

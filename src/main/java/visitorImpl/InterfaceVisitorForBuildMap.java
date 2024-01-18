@@ -9,18 +9,25 @@ import model.ParamTypePair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
+/**
+ * 处理Interface
+ */
 public class InterfaceVisitorForBuildMap extends VoidVisitorAdapter<Void> {
 
     private HashMap<String, List<ParamTypePair>> interfacesMap; //InterfaceName : <paramType:paramName>
 
     private List<String> classNames;
 
+    private HashSet<String> importItems;//哪些pb message需要从别的地方import进来
 
-    public InterfaceVisitorForBuildMap(List<String>classNames,HashMap<String, List<ParamTypePair>> map) { //
+
+    public InterfaceVisitorForBuildMap(List<String>classNames,HashMap<String, List<ParamTypePair>> map,HashSet<String> importItems) { //
         this.interfacesMap = map;
         this.classNames = classNames;
+        this.importItems = importItems;
     }
 
     @Override
@@ -44,7 +51,10 @@ public class InterfaceVisitorForBuildMap extends VoidVisitorAdapter<Void> {
             for (Parameter parameter:methodDeclaration.getParameters()){
                 String paramName = parameter.getNameAsString();
                 String paramType = parameter.getTypeAsString();
-                paramType = JniToProtoTypeMapKt.Companion.convertToProtoType(paramType);
+                if (!JniToProtoTypeMapKt.Companion.getJni2ProtoMap().containsKey(paramType)){
+                    importItems.add(JniToProtoTypeMapKt.Companion.extractSubstringAfterLastDot(paramType,null));
+                }
+                paramType = JniToProtoTypeMapKt.Companion.convertToProtoType(paramType,null);
                 list.add(new ParamTypePair(paramType,paramName));
             }
 

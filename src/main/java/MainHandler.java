@@ -1,7 +1,9 @@
 import CodeParserUtil.JavaFileCodeParser;
+import CodeParserUtil.WriteProtoFileUtil;
 import com.github.javaparser.JavaParser;
 import model.MethodSourceInfoDetail;
 
+import java.util.HashSet;
 import java.util.List;
 
 public class MainHandler {
@@ -14,7 +16,11 @@ public class MainHandler {
 
         codeParser.buildParsedInfoModel(filePath);
 
-        List<MethodSourceInfoDetail> list = codeParser.methodSourceInfoDetailList;
+        WriteProtoFileUtil.writeToProtoFile(codeParser.classSourceInfoDetail);
+
+        List<MethodSourceInfoDetail> funcList = codeParser.methodSourceInfoDetailList;
+        List<String> classNames = codeParser.classNames;
+        HashSet<String> set = codeParser.importItems;
 
 
 

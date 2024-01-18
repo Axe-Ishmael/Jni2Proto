@@ -24,7 +24,7 @@ class JniToProtoTypeMapKt {
 
         }
 
-        fun convertToProtoType(paramType: String): String {
+        fun convertToProtoType(paramType: String,importItems:HashSet<String>?): String {
             val hashMap = getJni2ProtoMap()
             val getValue = hashMap[paramType]
 
@@ -32,7 +32,7 @@ class JniToProtoTypeMapKt {
                 return getValue
             }
 
-            return extractSubstringAfterLastDot(paramType)
+            return extractSubstringAfterLastDot(paramType,importItems)
         }
 
 
@@ -42,13 +42,17 @@ class JniToProtoTypeMapKt {
          * @param str 输入字符串
          * @return 最后一个点之后的字符串，如果没有点则返回 str
          */
-        fun extractSubstringAfterLastDot(str: String): String {
+        fun extractSubstringAfterLastDot(str: String,importItems:HashSet<String>?): String {
             val lastDotIndex = str.lastIndexOf('.')
-            return if (lastDotIndex != -1) {
+            val ret =  if (lastDotIndex != -1) {
                 str.substring(lastDotIndex + 1)
             } else {
-                str
+                str.toString()
             }
+
+            importItems?.add(ret)
+
+            return ret
         }
     }
 }

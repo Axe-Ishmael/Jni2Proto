@@ -10,16 +10,23 @@ import model.MethodSourceInfoDetail;
 import model.ParamTypePair;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
+/**
+ * 处理Class中的函数
+ */
 public class MethodVisitor extends VoidVisitorAdapter<Void> {
     private HashMap<String,List<ParamTypePair>> callbackMap; //已经经过扫描得到的Callback函数Info集合  InterfaceName : <paramType:paramName>
 
     private List<MethodSourceInfoDetail> methodSourceInfoDetailList;//由外面传入
 
-    public MethodVisitor(HashMap<String, List<ParamTypePair>> callbackMap, List<MethodSourceInfoDetail> methodSourceInfoDetailList) {
+    private  HashSet<String> importItems;
+
+    public MethodVisitor(HashMap<String, List<ParamTypePair>> callbackMap, List<MethodSourceInfoDetail> methodSourceInfoDetailList,HashSet<String> importItems) {
         this.callbackMap = callbackMap;
         this.methodSourceInfoDetailList = methodSourceInfoDetailList;
+        this.importItems = importItems;
     }
 
     @Override
@@ -29,6 +36,7 @@ public class MethodVisitor extends VoidVisitorAdapter<Void> {
             return;
         }
 
+        //todo 需要过滤到method中包含“native”的方法吗？
         // 遍历类中的所有方法
         for (MethodDeclaration method : n.getMethods()) {
             String methodName = method.getNameAsString();
@@ -43,12 +51,15 @@ public class MethodVisitor extends VoidVisitorAdapter<Void> {
                 String paramType = parameter.getTypeAsString();
                 String paramName = parameter.getNameAsString();
 
-                paramType = JniToProtoTypeMapKt.Companion.convertToProtoType(paramType);
+                String paramTypeConvert = JniToProtoTypeMapKt.Companion.convertToProtoType(paramType,null);
 
-                if (callbackMap.containsKey(paramType)){
-                    methodSourceInfoDetail.setResponseInfo(callbackMap.get(paramType));
+                if (callbackMap.containsKey(paramTypeConvert)){
+                    methodSourceInfoDetail.setResponseInfo(callbackMap.get(paramTypeConvert));
                 }else {
-                    methodSourceInfoDetail.getRequestInfo().add(new ParamTypePair(paramType,paramName));
+                    if(!JniToProtoTypeMapKt.Companion.getJni2ProtoMap().containsKey(paramType)){
+                        importItems.add(paramTypeConvert);
+                    }
+                    methodSourceInfoDetail.getRequestInfo().add(new ParamTypePair(paramTypeConvert,paramName));
                 }
 
             }

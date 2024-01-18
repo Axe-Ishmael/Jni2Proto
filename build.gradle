@@ -16,6 +16,7 @@ dependencies {
     // 添加 JavaParser 依赖
     implementation 'com.github.javaparser:javaparser-core:3.24.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.28'
 }
 
 test {
