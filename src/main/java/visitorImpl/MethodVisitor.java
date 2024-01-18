@@ -41,6 +41,11 @@ public class MethodVisitor extends VoidVisitorAdapter<Void> {
         for (MethodDeclaration method : n.getMethods()) {
             String methodName = method.getNameAsString();
 
+            if (methodName.contains("native")||methodName.contains("Native")||methodName.contains("finalize")||methodName.equals("getService")){
+
+                continue;
+            }
+
             MethodSourceInfoDetail methodSourceInfoDetail = new MethodSourceInfoDetail();
 
             methodSourceInfoDetail.setMethodName(methodName);
@@ -51,7 +56,7 @@ public class MethodVisitor extends VoidVisitorAdapter<Void> {
                 String paramType = parameter.getTypeAsString();
                 String paramName = parameter.getNameAsString();
 
-                String paramTypeConvert = JniToProtoTypeMapKt.Companion.convertToProtoType(paramType,null);
+                String paramTypeConvert = JniToProtoTypeMapKt.Companion.convertToProtoType(paramType);
 
                 if (callbackMap.containsKey(paramTypeConvert)){
                     methodSourceInfoDetail.setResponseInfo(callbackMap.get(paramTypeConvert));

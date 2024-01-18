@@ -23,12 +23,12 @@ public class WriteProtoFileUtil {
 
         String header = ProtoFileContent.getProtoHeader()+"\n";
 
-        String bodyMessgaeContent = "";
+        StringBuilder bodyMessgaeContent = new StringBuilder();
 
         for (MethodSourceInfoDetail detail:funcInfoList){
             String requestMessage = generateRequestMessage(detail);
             String responseMessage = generateResponseMessage(detail);
-            bodyMessgaeContent += requestMessage + responseMessage;
+            bodyMessgaeContent.append(requestMessage).append(responseMessage);
         }
 
 
@@ -59,7 +59,7 @@ public class WriteProtoFileUtil {
 
     public static String generateRequestMessage(MethodSourceInfoDetail methodSourceInfoDetail){
 
-        if (methodSourceInfoDetail.getRequestInfo().size() == 0){
+        if (methodSourceInfoDetail.getRequestInfo().isEmpty()){
             return "";
         }
         String methodName = methodSourceInfoDetail.getMethodName();
@@ -86,7 +86,7 @@ public class WriteProtoFileUtil {
 
     public static String generateResponseMessage(MethodSourceInfoDetail methodSourceInfoDetail){
 
-        if (methodSourceInfoDetail.getResponseInfo().size() == 0){
+        if (methodSourceInfoDetail.getResponseInfo().isEmpty()){
             return "";
         }
 
@@ -116,7 +116,19 @@ public class WriteProtoFileUtil {
 
         String methodName = methodSourceInfoDetail.getMethodName();
 
-        String content = "\trpc "+methodName+"("+methodName+"Request"+")"+" returns "+"("+methodName+"Response"+") "+"{}\n";
+        String methodNameRequest = "";
+
+        String methodNameResponse = "";
+
+        if (!methodSourceInfoDetail.getRequestInfo().isEmpty()){
+            methodNameRequest = methodName+"Request";
+        }
+
+        if (!methodSourceInfoDetail.getResponseInfo().isEmpty()){
+            methodNameResponse = methodName+"Response";
+        }
+
+        String content = "\trpc "+methodName+"("+methodNameRequest+")"+" returns "+"("+methodNameResponse+") "+"{}\n";
 
         return content;
     }
