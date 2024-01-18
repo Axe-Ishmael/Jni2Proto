@@ -1,5 +1,6 @@
 package model;
 
+import java.util.HashSet;
 import java.util.List;
 
 public class ClassSourceInfoDetail {
@@ -8,8 +9,12 @@ public class ClassSourceInfoDetail {
 
     public List<String> classNames;
 
-    public ClassSourceInfoDetail( List<String> className,List<MethodSourceInfoDetail> funcInfoList) {
+    public HashSet<String> importItems;
+
+
+    public ClassSourceInfoDetail(List<String> classNames,List<MethodSourceInfoDetail> funcInfoList, HashSet<String> importItems) {
         this.funcInfoList = funcInfoList;
-        this.classNames = className;
+        this.classNames = classNames;
+        this.importItems = importItems;
     }
 }

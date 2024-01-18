@@ -46,7 +46,7 @@ public class JavaFileCodeParser {
             CompilationUnit cu = parseResult.getResult().get();
             cu.accept(new InterfaceVisitorForBuildMap(classNames,callbackMap,importItems),null);
             cu.accept(new MethodVisitor(callbackMap,methodSourceInfoDetailList,importItems),null);
-            classSourceInfoDetail = new ClassSourceInfoDetail(classNames,methodSourceInfoDetailList);
+            classSourceInfoDetail = new ClassSourceInfoDetail(classNames,methodSourceInfoDetailList,importItems);
 
             System.out.printf("");
         }catch (Exception e){

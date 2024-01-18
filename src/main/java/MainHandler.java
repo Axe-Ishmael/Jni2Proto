@@ -1,3 +1,4 @@
+import CodeParserUtil.FilePathFindUtil;
 import CodeParserUtil.JavaFileCodeParser;
 import CodeParserUtil.WriteProtoFileUtil;
 import com.github.javaparser.JavaParser;
@@ -12,15 +13,18 @@ public class MainHandler {
 
         String filePath = "/Users/axeishmael/AndroidStudioProjects/wxwork_ios/src/android_submodule/autotool/output/GrandProfileService/GrandProfileService.java";
 
+        String searchPath = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework";
         JavaFileCodeParser codeParser = new JavaFileCodeParser();
 
         codeParser.buildParsedInfoModel(filePath);
 
-        WriteProtoFileUtil.writeToProtoFile(codeParser.classSourceInfoDetail);
+        WriteProtoFileUtil.writeToProtoFile(searchPath,codeParser.classSourceInfoDetail);
 
         List<MethodSourceInfoDetail> funcList = codeParser.methodSourceInfoDetailList;
         List<String> classNames = codeParser.classNames;
         HashSet<String> set = codeParser.importItems;
+
+        FilePathFindUtil.findImportPathOfMessage(searchPath,"IDcardOcrReq");
 
 
 

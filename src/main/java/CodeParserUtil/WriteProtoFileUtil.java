@@ -5,11 +5,12 @@ import model.ClassSourceInfoDetail;
 import model.MethodSourceInfoDetail;
 import model.ParamTypePair;
 
+import java.util.HashSet;
 import java.util.List;
 
 public class WriteProtoFileUtil {
 
-    public static void writeToProtoFile(ClassSourceInfoDetail classSourceInfoDetail){
+    public static void writeToProtoFile(String searchPath,ClassSourceInfoDetail classSourceInfoDetail){
 
         String className = "";
 
@@ -43,10 +44,39 @@ public class WriteProtoFileUtil {
 
         String rpcServiceEnd = " }\n";
 
-        String WholeContent = header+bodyMessgaeContent+rpcServiceHeader+rpcMethodContent+rpcServiceEnd;
 
         //todo import
 
+        HashSet<String> importItems = classSourceInfoDetail.importItems;
+
+        StringBuilder importSentences = new StringBuilder();
+        HashSet<String> importSentencesSet = new HashSet<>();//去重
+
+        for (String item:importItems){
+            List<String> sent = FilePathFindUtil.findImportPathOfMessage(searchPath,item);
+            if (!sent.get(1).isEmpty()){
+                throw new RuntimeException(item+" is not found in "+searchPath);
+            }
+            if (!sent.get(0).isEmpty()){
+                String str = sent.get(0);
+                String key = "mobile_framework/";
+
+                int index = str.indexOf(key);
+                if (index != -1) {
+                    // 截取 "mobile_framework/" 之后的部分，包括 "mobile_framework/" 本身
+                    str = str.substring(index);
+                }
+                importSentencesSet.add(str);
+            }
+
+        }
+
+        for (String item:importSentencesSet){
+            importSentences.append("import ").append(item).append(System.lineSeparator());
+        }
+
+
+        String WholeContent = header + importSentences +bodyMessgaeContent + rpcServiceHeader + rpcMethodContent + rpcServiceEnd;
 
 
 
