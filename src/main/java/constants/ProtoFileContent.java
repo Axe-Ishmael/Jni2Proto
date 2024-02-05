@@ -8,7 +8,7 @@ import java.util.List;
 public class ProtoFileContent {
 
     public static String getProtoHeader(){
-        String header = "syntax = \"proto3\"\n" + "package jni_to_proto";
+        String header = "syntax = \"proto2\"\n" + "package jni_to_proto";
         return header;
     }
 

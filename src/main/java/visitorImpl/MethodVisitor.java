@@ -36,7 +36,7 @@ public class MethodVisitor extends VoidVisitorAdapter<Void> {
             return;
         }
 
-        //todo 需要过滤到method中包含“native”的方法吗？
+        //todo 需要过滤到method中包含“native”的方法吗？ 已全部过滤
         // 遍历类中的所有方法
         for (MethodDeclaration method : n.getMethods()) {
             String methodName = method.getNameAsString();

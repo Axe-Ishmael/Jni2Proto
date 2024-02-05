@@ -64,7 +64,7 @@ public class WriteProtoFileUtil {
                 int index = str.indexOf(key);
                 if (index != -1) {
                     // 截取 "mobile_framework/" 之后的部分，包括 "mobile_framework/" 本身
-                    str = str.substring(index);
+                    str = str.substring(index+key.length());
                 }
                 importSentencesSet.add(str);
             }
@@ -72,7 +72,7 @@ public class WriteProtoFileUtil {
         }
 
         for (String item:importSentencesSet){
-            importSentences.append("import ").append(item).append(System.lineSeparator());
+            importSentences.append("import ").append("\"").append(item).append("\";").append(System.lineSeparator());
         }
 
 
