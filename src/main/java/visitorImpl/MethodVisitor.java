@@ -58,10 +58,10 @@ public class MethodVisitor extends VoidVisitorAdapter<Void> {
                 String paramTypeConvert = JniToProtoTypeMapKt.Companion.convertJniTypeToProtoType(paramType);
 
                 if (callbackMap.containsKey(paramType)){
-                    methodSourceInfoDetail.setResponseInfo(callbackMap.get(paramTypeConvert));
+                    methodSourceInfoDetail.setResponseInfo(callbackMap.get(paramType));
                 }else {
-                    String mainType = getMainType(paramTypeConvert);
-                    if(!JniToProtoTypeMapKt.Companion.getJniType2ProtoTypeMap().containsKey(mainType)){
+                    String mainType = JniToProtoTypeMapKt.Companion.getMainType(paramTypeConvert);
+                    if(!JniToProtoTypeMapKt.Companion.getBasicProtoTypeMap().containsKey(mainType)){
                         importItems.add(mainType);
                     }
                     methodSourceInfoDetail.getRequestInfo().add(new ParamTypePair(paramTypeConvert,paramName));
@@ -78,17 +78,22 @@ public class MethodVisitor extends VoidVisitorAdapter<Void> {
 
 
     /**
-     * 从"op/re ABC"中提取出ABC
-     * @return
+     * 找出Callback的ParamTypePairList中需要Import的item
      */
-    String getMainType(String type){
-
-        int lastIndex = type.lastIndexOf(" ");
-        if (lastIndex != -1){
-            return type.substring(lastIndex+1);
+    private void processParamTypePairListOfCallback(List<ParamTypePair> list){
+        if (list == null || list.isEmpty()){
+            return;
         }
 
-        return "";
+        for (ParamTypePair pair : list){
+            String mainType = JniToProtoTypeMapKt.Companion.getMainType(pair.getParamType());
+
+            if(!JniToProtoTypeMapKt.Companion.getJniType2ProtoTypeMap().containsKey(mainType)){
+                importItems.add(mainType);
+            }
+
+        }
+
 
     }
 

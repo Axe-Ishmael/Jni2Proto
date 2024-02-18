@@ -25,6 +25,17 @@ class JniToProtoTypeMapKt {
         }
 
 
+        val basicProtoTypeMap = HashMap<String,String>().apply {
+            this.put("string","optional string")
+            this.put("uint32","optional uint32")
+            this.put("uint64","optional uint64")
+            this.put("bool","optional bool")
+            this.put("float","optional float")
+            this.put("double","optional double")
+            this.put("bytes","optional bytes")
+        }
+
+
 
 
 
@@ -126,6 +137,20 @@ class JniToProtoTypeMapKt {
 
 
             return ret
+        }
+
+
+        /**
+         * 从"op/re ABC"中提取出ABC
+         * @return
+         */
+        fun getMainType(type: String): String {
+            val lastIndex = type.lastIndexOf(" ")
+            if (lastIndex != -1) {
+                return type.substring(lastIndex + 1)
+            }
+
+            return ""
         }
     }
 }

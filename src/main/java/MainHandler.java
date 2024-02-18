@@ -4,12 +4,13 @@ import CodeParserUtil.WriteProtoFileUtil;
 import com.github.javaparser.JavaParser;
 import model.MethodSourceInfoDetail;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 
 public class MainHandler {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         //待翻译为Proto的JNI文件位置
         String filePath = "/Users/axeishmael/AndroidStudioProjects/wxwork_ios/src/android_submodule/library/lib_weworkservice/src/main/java/com/tencent/wework/foundation/logic/GrandProfileService.java";
@@ -21,6 +22,7 @@ public class MainHandler {
 
         JavaFileCodeParser codeParser = new JavaFileCodeParser();
 
+        codeParser.initCallbackMap(commonCallbacksDirectoryPath);
         codeParser.buildParsedInfoModel(filePath);
 
         WriteProtoFileUtil.writeToProtoFile(searchPath,codeParser.classSourceInfoDetail);

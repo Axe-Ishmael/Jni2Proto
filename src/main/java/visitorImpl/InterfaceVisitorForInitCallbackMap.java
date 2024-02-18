@@ -13,9 +13,10 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * 处理Interface
+ * 初始化callbackMap
+ * 建立对library/lib_weworkservice/src/main/java/com/tencent/wework/foundation/callback目录下，所有Interface的索引
  */
-public class InterfaceVisitorForBuildMap extends VoidVisitorAdapter<Void> {
+public class InterfaceVisitorForInitCallbackMap extends VoidVisitorAdapter<Void> {
 
     private HashMap<String, List<ParamTypePair>> interfacesMap; //InterfaceName : <paramType:paramName>
 
@@ -23,8 +24,7 @@ public class InterfaceVisitorForBuildMap extends VoidVisitorAdapter<Void> {
 
     private HashSet<String> importItems;//哪些pb message需要从别的地方import进来
 
-
-    public InterfaceVisitorForBuildMap(List<String>classNames,HashMap<String, List<ParamTypePair>> map,HashSet<String> importItems) { //
+    public InterfaceVisitorForInitCallbackMap(List<String>classNames,HashMap<String, List<ParamTypePair>> map,HashSet<String> importItems) { //
         this.interfacesMap = map;
         this.classNames = classNames;
         this.importItems = importItems;
@@ -32,8 +32,7 @@ public class InterfaceVisitorForBuildMap extends VoidVisitorAdapter<Void> {
 
     @Override
     public void visit(ClassOrInterfaceDeclaration n, Void arg) {
-        // 检查这是不是一个接口
-        if (n.isInterface()) {
+        if (n.isInterface()){
 
             String interfaceName = n.getNameAsString();
             List<MethodDeclaration> methodList =  n.getMethods();
@@ -42,21 +41,18 @@ public class InterfaceVisitorForBuildMap extends VoidVisitorAdapter<Void> {
             }
 
             List<ParamTypePair> list = new ArrayList<>();
-
-            //  paramType : paramName
-
-
             MethodDeclaration methodDeclaration = methodList.get(0);//默认接口中只有一个方法
+
 
             for (Parameter parameter:methodDeclaration.getParameters()){
                 String paramName = parameter.getNameAsString();
                 String paramType = parameter.getTypeAsString();
-                String paramTypeConvert = JniToProtoTypeMapKt.Companion.convertJniTypeToProtoType(paramType);
 
+                String paramTypeConvert = JniToProtoTypeMapKt.Companion.convertJniTypeToProtoType(paramType);
                 String mainType = JniToProtoTypeMapKt.Companion.getMainType(paramTypeConvert);
 
-                if (!JniToProtoTypeMapKt.Companion.getBasicProtoTypeMap().containsKey(mainType)){
-                    importItems.add(JniToProtoTypeMapKt.Companion.extractSubstringAfterLastDot(mainType));
+                if (!JniToProtoTypeMapKt.Companion.getJniType2ProtoTypeMap().containsKey(mainType)){
+//                    importItems.add(JniToProtoTypeMapKt.Companion.extractSubstringAfterLastDot(mainType));//init callback 不需要把ImportedItem加进来，因为不一定会用
                 }
                 list.add(new ParamTypePair(paramTypeConvert,paramName));
             }
@@ -64,9 +60,12 @@ public class InterfaceVisitorForBuildMap extends VoidVisitorAdapter<Void> {
             interfacesMap.put(interfaceName,list);
 
         }else {
-            classNames.add(n.getNameAsString());
+
         }
 
-        super.visit(n,arg);
     }
+
+
+
+
 }
