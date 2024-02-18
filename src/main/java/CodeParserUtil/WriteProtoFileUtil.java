@@ -54,8 +54,8 @@ public class WriteProtoFileUtil {
 
         for (String item:importItems){
             List<String> sent = FilePathFindUtil.findImportPathOfMessage(searchPath,item);
-            if (!sent.get(1).isEmpty()){
-                throw new RuntimeException(item+" is not found in "+searchPath);
+            if (sent.size()>1){
+                throw new RuntimeException(item+" is not found in "+searchPath+"." +"Error messgae: "+sent.get(1));
             }
             if (!sent.get(0).isEmpty()){
                 String str = sent.get(0);

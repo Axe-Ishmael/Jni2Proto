@@ -9,31 +9,33 @@ import java.util.List;
  */
 public class FilePathFindUtil {
 
-    public static List<String> findImportPathOfMessage(String searchDirectoryPath,String messageName){
-        String shellScript = "" +
-                "#!/bin/bash\n" +
+    public static List<String> findImportPathOfMessage(String searchDirectoryPath, String messageName) {
+        String shellScript = "#!/bin/bash\n" +
                 "\n" +
                 "# 最顶层文件夹路径\n" +
-                "top_level_folder=\""+searchDirectoryPath+"\"\n" +
-                "# 要搜索的特定内容\n" +
-                "search_content=\""+"message "+messageName+"\"\n" +
+                "top_level_folder=\"" + searchDirectoryPath + "\"\n" +
+//                "top_level_folder=\"" + "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework" + "\"\n" +
+                "# 要搜索的消息名称\n" +
+                "message_name=\"" + messageName + "\"\n" +
+//                "message_name=\"" + "OprCorpShowHideReq" + "\"\n" +
+                "\n" +
+                "# 要搜索的特定内容，这里使用正则表达式进行精确匹配\n" +
+                "# ^ 表示行的开始，[[:space:]]+ 表示一个或多个空白字符\n" +
+                "search_content=\"^message[[:space:]]+${message_name}\"\n" +
                 "\n" +
                 "# 使用find命令遍历文件夹下的所有.proto文件\n" +
                 "find \"$top_level_folder\" -type f -name \"*.proto\" | while read -r file; do\n" +
                 "    # 使用grep检查文件内容\n" +
-                "    if grep -q \"$search_content\" \"$file\"; then\n" +
+                "    if grep -q -E \"$search_content\" \"$file\"; then\n" +
                 "        # 输出文件的路径\n" +
                 "        echo \"$file\"\n" +
                 "    fi\n" +
                 "done";
 
-
         // 创建临时文件来保存脚本
         File tempScript = null;
+        List<String> ret = new ArrayList<>();
 
-        StringBuilder output = new StringBuilder();
-
-        StringBuilder err = new StringBuilder();
         try {
             tempScript = File.createTempFile("script", ".sh");
 
@@ -53,42 +55,29 @@ public class FilePathFindUtil {
             Process process = pb.start();
 
             // 读取标准输出
-            InputStream stdout = process.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
-            String outLine;
-            while ((outLine = reader.readLine()) != null) {
-                output.append(outLine).append(System.lineSeparator());
-                System.out.println("Stdout: " + output);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line = reader.readLine();
+            if (line != null){
+                ret.add(line);
+            }else {
+                ret.add("");
             }
 
-            // 读取标准错误
-            InputStream stderr = process.getErrorStream();
-            BufferedReader errorReader = new BufferedReader(new InputStreamReader(stderr));
-            String errline;
-            while ((errline = errorReader.readLine()) != null) {
-                err.append(errline).append(System.lineSeparator());
-                System.err.println("Stderr: " + errline);
-            }
 
             // 等待脚本执行完成
             int exitCode = process.waitFor();
-            System.out.println("Script executed with exit code: " + exitCode);
+            if (exitCode != 0) {
+                ret.add("Script executed with exit code: " + exitCode);
+            }
 
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            ret.add("An error occurred: " + e.getMessage());
         } finally {
             // 清理临时文件
-            if (tempScript != null) {
-                tempScript.delete();
+            if (tempScript != null && !tempScript.delete()) {
+                ret.add("Failed to delete the temporary script file.");
             }
         }
-
-        List<String> ret = new ArrayList<>();
-
-        ret.add(output.toString().trim());
-        ret.add(String.valueOf(err));
-
-
 
         return ret;
     }
