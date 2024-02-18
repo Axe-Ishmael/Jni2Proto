@@ -7,6 +7,7 @@ import model.ParamTypePair;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 public class WriteProtoFileUtil {
 
@@ -54,7 +55,12 @@ public class WriteProtoFileUtil {
 
         for (String item:importItems){
             List<String> sent = FilePathFindUtil.findImportPathOfMessage(searchPath,item);
-            if (sent.size()>1){
+
+            if (Objects.equals(sent.get(0), "")){
+                throw new RuntimeException(item+" is not found in "+searchPath+".");
+            }
+
+            if (sent.size()>1 ){
                 throw new RuntimeException(item+" is not found in "+searchPath+"." +"Error messgae: "+sent.get(1));
             }
             if (!sent.get(0).isEmpty()){
