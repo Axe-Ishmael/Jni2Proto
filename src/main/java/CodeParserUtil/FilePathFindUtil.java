@@ -21,7 +21,7 @@ public class FilePathFindUtil {
                 "\n" +
                 "# 要搜索的特定内容，这里使用正则表达式进行精确匹配\n" +
                 "# ^ 表示行的开始，[[:space:]]+ 表示一个或多个空白字符\n" +
-                "search_content=\"^message[[:space:]]+${message_name}\"\n" +
+                "search_content=\"^message[[:space:]]+\\b${message_name}\\b\"\n" +
                 "\n" +
                 "# 使用find命令遍历文件夹下的所有.proto文件\n" +
                 "find \"$top_level_folder\" -type f -name \"*.proto\" | while read -r file; do\n" +
