@@ -164,7 +164,7 @@ public class WriteProtoFileUtil {
             methodNameResponse = methodName+"Response";
         }
 
-        String content = "\trpc "+methodName+"("+methodNameRequest+")"+" returns "+"("+methodNameResponse+") "+"{}\n";
+        String content = "\trpc "+methodName+"("+methodNameRequest+")"+" returns "+"("+methodNameResponse+") "+";\n";
 
         return content;
     }
