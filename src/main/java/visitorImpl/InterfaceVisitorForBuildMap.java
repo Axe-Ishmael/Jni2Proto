@@ -51,10 +51,10 @@ public class InterfaceVisitorForBuildMap extends VoidVisitorAdapter<Void> {
             for (Parameter parameter:methodDeclaration.getParameters()){
                 String paramName = parameter.getNameAsString();
                 String paramType = parameter.getTypeAsString();
-                if (!JniToProtoTypeMapKt.Companion.getJni2ProtoMap().containsKey(paramType)){
+                if (!JniToProtoTypeMapKt.Companion.getJniType2ProtoTypeMap().containsKey(paramType)){
                     importItems.add(JniToProtoTypeMapKt.Companion.extractSubstringAfterLastDot(paramType));
                 }
-                paramType = JniToProtoTypeMapKt.Companion.convertToProtoType(paramType);
+                paramType = JniToProtoTypeMapKt.Companion.convertJniTypeToProtoType(paramType);
                 list.add(new ParamTypePair(paramType,paramName));
             }
 

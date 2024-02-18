@@ -3,7 +3,6 @@ package visitorImpl;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
-import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import constants.JniToProtoTypeMapKt;
 import model.MethodSourceInfoDetail;
@@ -56,13 +55,14 @@ public class MethodVisitor extends VoidVisitorAdapter<Void> {
                 String paramType = parameter.getTypeAsString();
                 String paramName = parameter.getNameAsString();
 
-                String paramTypeConvert = JniToProtoTypeMapKt.Companion.convertToProtoType(paramType);
+                String paramTypeConvert = JniToProtoTypeMapKt.Companion.convertJniTypeToProtoType(paramType);
 
-                if (callbackMap.containsKey(paramTypeConvert)){
+                if (callbackMap.containsKey(paramType)){
                     methodSourceInfoDetail.setResponseInfo(callbackMap.get(paramTypeConvert));
                 }else {
-                    if(!JniToProtoTypeMapKt.Companion.getJni2ProtoMap().containsKey(paramType)){
-                        importItems.add(paramTypeConvert);
+                    String mainType = getMainType(paramTypeConvert);
+                    if(!JniToProtoTypeMapKt.Companion.getJniType2ProtoTypeMap().containsKey(mainType)){
+                        importItems.add(mainType);
                     }
                     methodSourceInfoDetail.getRequestInfo().add(new ParamTypePair(paramTypeConvert,paramName));
                 }
@@ -74,6 +74,22 @@ public class MethodVisitor extends VoidVisitorAdapter<Void> {
 
 
         super.visit(n, arg);
+    }
+
+
+    /**
+     * 从"op/re ABC"中提取出ABC
+     * @return
+     */
+    String getMainType(String type){
+
+        int lastIndex = type.lastIndexOf(" ");
+        if (lastIndex != -1){
+            return type.substring(lastIndex+1);
+        }
+
+        return "";
+
     }
 
 
