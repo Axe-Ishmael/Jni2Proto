@@ -13,13 +13,13 @@ public class ProtoFileContent {
     }
 
     public static String getRequestMessageHeader(String methodName){
-        String requestHeader = "message "+methodName+"Request{\n" ;
+        String requestHeader = "message "+methodName+"Request\n{\n" ;
         return requestHeader;
     }
 
 
     public static String getResponseMessageHeader(String methodName){
-        String responseHeader = "message "+methodName+"Response{\n" ;
+        String responseHeader = "message "+methodName+"Response\n{\n" ;
         return responseHeader;
     }
 
