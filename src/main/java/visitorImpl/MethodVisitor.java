@@ -45,7 +45,6 @@ public class MethodVisitor extends VoidVisitorAdapter<Void> {
             String methodName = method.getNameAsString();
 
             if (methodName.contains("native")||methodName.contains("Native")||methodName.contains("finalize")||methodName.equals("getService")){
-
                 continue;
             }
 
@@ -69,6 +68,7 @@ public class MethodVisitor extends VoidVisitorAdapter<Void> {
                 }else if (fanxinCallbackMap.containsKey(callbackType)){
                     List<String> appliedFanxinTypeList = JniToProtoTypeMapKt.Companion.extractAppliedFanxinType(paramType);//实际使用的泛型类型
                     if (appliedFanxinTypeList != null){
+
                         FanxinInterfaceParamTypeInfo info = fanxinCallbackMap.get(callbackType);
                         List<ParamTypePair> paramTypePairList = info.getParamTypeList();
                         List<String> callbackFanxinTypeList = info.getStatedFanxinTypeList();
@@ -88,20 +88,14 @@ public class MethodVisitor extends VoidVisitorAdapter<Void> {
 
                             String convertTypeStr = JniToProtoTypeMapKt.Companion.convertJniTypeToProtoType(appliedFanxinType);
 
-
                             if (statedFanxinTypePair != null){
                                 statedFanxinTypePair.setParamType(convertTypeStr);
                             }
-
                         }
-
 
                         findImportItemInParamTypePairListOfCallback(fanxinCallbackMap.get(callbackType).getParamTypeList());
                         methodSourceInfoDetail.setResponseInfo(fanxinCallbackMap.get(callbackType).getParamTypeList());
-
-
                     }
-
 
 
                 }else {

@@ -33,6 +33,8 @@ public class WriteProtoFileUtil {
             bodyMessgaeContent.append(requestMessage).append(responseMessage);
         }
 
+        bodyMessgaeContent.append("message Empty {\n" + "\n" + "}");
+
 
         String rpcServiceHeader = ProtoFileContent.getRpcServiceHeader(className);
 
@@ -158,10 +160,14 @@ public class WriteProtoFileUtil {
 
         if (!methodSourceInfoDetail.getRequestInfo().isEmpty()){
             methodNameRequest = methodName+"Request";
+        }else {
+            methodNameRequest = "Empty";
         }
 
         if (!methodSourceInfoDetail.getResponseInfo().isEmpty()){
             methodNameResponse = methodName+"Response";
+        }else {
+            methodNameResponse = "Empty";
         }
 
         String content = "\trpc "+methodName+"("+methodNameRequest+")"+" returns "+"("+methodNameResponse+") "+";\n";
