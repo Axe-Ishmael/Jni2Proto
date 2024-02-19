@@ -8,18 +8,18 @@ import java.util.List;
 public class ProtoFileContent {
 
     public static String getProtoHeader(){
-        String header = "syntax = \"proto2;\"\n" + "package jni_to_proto;";
+        String header = "syntax = \"proto2\";\n" + "package jni_to_proto;";
         return header;
     }
 
     public static String getRequestMessageHeader(String methodName){
-        String requestHeader = "message "+methodName+"Request{\n" + "\n";
+        String requestHeader = "message "+methodName+"Request{\n" ;
         return requestHeader;
     }
 
 
     public static String getResponseMessageHeader(String methodName){
-        String responseHeader = "message "+methodName+"Response{\n" + "\n";
+        String responseHeader = "message "+methodName+"Response{\n" ;
         return responseHeader;
     }
 

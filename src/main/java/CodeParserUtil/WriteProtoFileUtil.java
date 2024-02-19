@@ -30,10 +30,10 @@ public class WriteProtoFileUtil {
         for (MethodSourceInfoDetail detail:funcInfoList){
             String requestMessage = generateRequestMessage(detail);
             String responseMessage = generateResponseMessage(detail);
-            bodyMessgaeContent.append(requestMessage).append(responseMessage);
+            bodyMessgaeContent.append(requestMessage).append(responseMessage).append("\n");
         }
 
-        bodyMessgaeContent.append("message Empty {\n" + "\n" + "}");
+        bodyMessgaeContent.append("message Empty {\n" + "\n" + "}\n\n");
 
 
         String rpcServiceHeader = ProtoFileContent.getRpcServiceHeader(className);
@@ -82,6 +82,7 @@ public class WriteProtoFileUtil {
         for (String item:importSentencesSet){
             importSentences.append("import ").append("\"").append(item).append("\";").append(System.lineSeparator());
         }
+        importSentences.append("\n");
 
 
         String WholeContent = header + importSentences +bodyMessgaeContent + rpcServiceHeader + rpcMethodContent + rpcServiceEnd;
