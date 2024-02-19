@@ -56,7 +56,7 @@ public class InterfaceVisitorForBuildMap extends VoidVisitorAdapter<Void> {
                 String mainType = JniToProtoTypeMapKt.Companion.getMainType(paramTypeConvert);
 
                 if (!JniToProtoTypeMapKt.Companion.getBasicProtoTypeMap().containsKey(mainType)){
-                    importItems.add(JniToProtoTypeMapKt.Companion.extractSubstringAfterLastDot(mainType));
+                    importItems.add(mainType);
                 }
                 list.add(new ParamTypePair(paramTypeConvert,paramName));
             }
