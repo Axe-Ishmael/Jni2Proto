@@ -4,6 +4,7 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
 import model.ClassSourceInfoDetail;
+import model.FanxinInterfaceParamTypeInfo;
 import model.MethodSourceInfoDetail;
 import model.ParamTypePair;
 import visitorImpl.InterfaceVisitorForBuildMap;
@@ -26,6 +27,8 @@ public class JavaFileCodeParser {
     private final JavaParser javaParser;
     public  final HashMap<String, List<ParamTypePair>> callbackMap = new HashMap<>();//InterfaceName : <paramType:paramName>
     public List<MethodSourceInfoDetail> methodSourceInfoDetailList = new ArrayList<>();
+
+    public  final HashMap<String, FanxinInterfaceParamTypeInfo> fanxinCallbackMap = new HashMap<>();//使用泛型的Interface InterfaceName : <paramType:paramName>
 
     public List<String> classNames = new ArrayList<>();
 
@@ -53,11 +56,13 @@ public class JavaFileCodeParser {
             ParseResult<CompilationUnit> parseResult = javaParser.parse(file);
             CompilationUnit cu = parseResult.getResult().get();
             cu.accept(new InterfaceVisitorForBuildMap(classNames,callbackMap,importItems),null);
-            cu.accept(new MethodVisitor(callbackMap,methodSourceInfoDetailList,importItems),null);
+            cu.accept(new MethodVisitor(callbackMap,methodSourceInfoDetailList,importItems,fanxinCallbackMap),null);
             classSourceInfoDetail = new ClassSourceInfoDetail(classNames,methodSourceInfoDetailList,importItems);
 
-            System.out.printf("");
+            System.out.println("XXXBBBBXB");
         }catch (Exception e){
+
+            throw new RuntimeException(e.getMessage());
 
         }
 
@@ -89,7 +94,7 @@ public class JavaFileCodeParser {
             if (parseResult.isSuccessful() && parseResult.getResult().isPresent()) {
                 CompilationUnit compilationUnit = parseResult.getResult().get();
 
-                compilationUnit.accept(new InterfaceVisitorForInitCallbackMap(classNames,callbackMap,importItems), null);
+                compilationUnit.accept(new InterfaceVisitorForInitCallbackMap(classNames,callbackMap,importItems,fanxinCallbackMap), null);
             }
         } catch (IOException e) {
             e.printStackTrace();

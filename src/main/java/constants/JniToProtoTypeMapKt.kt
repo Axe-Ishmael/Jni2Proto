@@ -1,5 +1,7 @@
 package constants
 
+import model.ParamTypePair
+
 class JniToProtoTypeMapKt {
     companion object{
 
@@ -151,6 +153,51 @@ class JniToProtoTypeMapKt {
             }
 
             return ""
+        }
+
+
+        /**
+         * 对于有泛型的Interface，interface ABC<XXX>去掉后面泛型的部分，只保留ABC
+         */
+        fun getCallbackType(fanxinType:String):String{
+            if (fanxinType.contains("<")){
+                val index = fanxinType.indexOf("<")
+                if (index != -1){
+                    return fanxinType.substring(0,index).trim()
+                }
+            }
+
+            return fanxinType
+        }
+
+
+        /**
+         * 对于有泛型的Interface，interface X <A,B,C> 提取出 A,B,C
+         * 注意此处返回值可以为 null
+         */
+        fun extractAppliedFanxinType(fanxinType: String):List<String>?{
+            val startIndex = fanxinType.indexOf("<")
+
+            val endIndex = fanxinType.indexOf(">")
+
+            if (startIndex ==-1 || endIndex == -1){
+                return null
+            }
+
+            val insideBrackets = fanxinType.substring(startIndex+1,endIndex)
+
+            val appliedFanxinTypeList = insideBrackets.split(",").map { param ->param.trim() }
+
+            return appliedFanxinTypeList
+
+        }
+
+
+        fun findCorrectStatedFanxinTypePair(paramTypePairList:List<ParamTypePair>,statedFanxinType:String):ParamTypePair?{
+            val ret = paramTypePairList.find { paramTypePair -> paramTypePair.paramType.split(" ")[1].trim() == statedFanxinType }
+
+           return ret
+
         }
     }
 }
