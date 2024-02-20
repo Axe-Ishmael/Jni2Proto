@@ -15,6 +15,13 @@ import java.util.List;
 
 /**
  * 处理Class中的函数
+ *
+ *  * todo 对于
+ *  * public interface Callback2<A, B> {
+ *  *
+ *  *     void call(A arg1, B arg2);
+ *  * }
+ *  * 暂时无法处理，详情请看trunk中Callback2的使用场景，建议不继续使用Callback2。
  */
 public class MethodVisitor extends VoidVisitorAdapter<Void> {
     private HashMap<String,List<ParamTypePair>> callbackMap; //已经经过扫描得到的Callback函数Info集合  InterfaceName : <paramType:paramName>

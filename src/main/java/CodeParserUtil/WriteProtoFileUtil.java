@@ -5,6 +5,10 @@ import model.ClassSourceInfoDetail;
 import model.MethodSourceInfoDetail;
 import model.ParamTypePair;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -87,13 +91,32 @@ public class WriteProtoFileUtil {
 
         String WholeContent = header + importSentences +bodyMessgaeContent + rpcServiceHeader + rpcMethodContent + rpcServiceEnd;
 
-
+        writeContentToFile(className,WholeContent);
 
 
         System.out.printf("");
 
 
 
+    }
+
+    public static void writeContentToFile(String className,String WholeContent){
+        // 定义文件路径
+        String directoryPath = "src/main/java/Output"; // 替换为实际的目录路径
+        String fileName = className + ".proto";
+        File file = new File(directoryPath, fileName);
+
+        // 确保目录存在
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
+
+        // 写入文件内容
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, false))) { // false 表示不追加，覆盖文件
+            writer.write(WholeContent);
+        } catch (IOException  e) {
+            e.printStackTrace();
+        }
     }
 
     public static String generateRequestMessage(MethodSourceInfoDetail methodSourceInfoDetail){
