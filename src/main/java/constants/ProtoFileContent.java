@@ -45,7 +45,7 @@ public class ProtoFileContent {
 
     public static String getSingleLineMessageContent(ParamTypePair pair,int index){
 
-        String content = "\t"+pair.getParamType()+" "+pair.getParamName()+" = "+index +";\n";
+        String content = "\t"+pair.getParamType()+" "+pair.getParamName()+" = "+(index+1) +";\n";
 
         return content;
 
