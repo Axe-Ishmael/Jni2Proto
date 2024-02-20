@@ -23,7 +23,7 @@ public class WriteProtoFileUtil {
 
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-        String header = ProtoFileContent.getProtoHeader()+"\n";
+        String header = ProtoFileContent.getProtoHeader(className)+"\n";
 
         StringBuilder bodyMessgaeContent = new StringBuilder();
 
@@ -171,7 +171,7 @@ public class WriteProtoFileUtil {
             methodNameResponse = "Empty";
         }
 
-        String content = "\trpc "+methodName+"("+methodNameRequest+")"+" returns "+"("+methodNameResponse+") "+";\n";
+        String content = "\trpc "+methodName+"("+methodNameRequest+")"+" returns "+"("+methodNameResponse+")"+";\n";
 
         return content;
     }
