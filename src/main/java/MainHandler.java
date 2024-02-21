@@ -19,6 +19,7 @@ public class MainHandler {
         //api_proto工程中mobile_framework文件夹路径
         String searchPath = "/Users/axeishmael/StudioProjects/api_proto/src/mobile_framework";
 
+        //commonCallbacksDirectoryPath 和 generateCallbackDirectoryPath 是一些公共Callback Interface所在文件夹
         String commonCallbacksDirectoryPath = "/Users/axeishmael/AndroidStudioProjects/wxwork_ios/src/android_submodule/library/lib_weworkservice/src/main/java/com/tencent/wework/foundation/callback";
         String generateCallbackDirectoryPath = "/Users/axeishmael/AndroidStudioProjects/wxwork_ios/src/android_submodule/library/lib_weworkservice/src/main/java/com/tencent/wework/foundation/generateCallback";
 
@@ -36,11 +37,11 @@ public class MainHandler {
 
         WriteProtoFileUtil.writeToProtoFile(searchPath,codeParser.classSourceInfoDetail);
 
-        List<MethodSourceInfoDetail> funcList = codeParser.methodSourceInfoDetailList;
-        List<String> classNames = codeParser.classNames;
-        HashSet<String> set = codeParser.importItems;
-
-        List<String> ret = FilePathFindUtil.findImportPathOfMessage(searchPath,"UserInfo");
+//        List<MethodSourceInfoDetail> funcList = codeParser.methodSourceInfoDetailList;
+//        List<String> classNames = codeParser.classNames;
+//        HashSet<String> set = codeParser.importItems;
+//
+//        List<String> ret = FilePathFindUtil.findImportPathOfMessage(searchPath,"UserInfo");
 
 
 
