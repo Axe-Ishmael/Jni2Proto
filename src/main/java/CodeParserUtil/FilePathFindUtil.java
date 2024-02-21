@@ -56,26 +56,28 @@ public class FilePathFindUtil {
 
             // 读取标准输出
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line = reader.readLine();
-            if (line != null){
-                ret.add(line);
-            }else {
-                ret.add("");
+            String line = "";
+            while ((line = reader.readLine()) != null){
+                if (!line.isEmpty()){
+                    ret.add(line);
+                }
             }
+
 
 
             // 等待脚本执行完成
             int exitCode = process.waitFor();
             if (exitCode != 0) {
-                ret.add("Script executed with exit code: " + exitCode);
+                throw new RuntimeException("Script executed with exit code: " + exitCode);
             }
 
         } catch (IOException | InterruptedException e) {
-            ret.add("An error occurred: " + e.getMessage());
+            throw new RuntimeException("An error occurred: " + e.getMessage());
+
         } finally {
             // 清理临时文件
             if (tempScript != null && !tempScript.delete()) {
-                ret.add("Failed to delete the temporary script file.");
+                throw new RuntimeException("Failed to delete the temporary script file.");
             }
         }
 

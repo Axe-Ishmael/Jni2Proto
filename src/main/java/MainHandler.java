@@ -40,7 +40,7 @@ public class MainHandler {
         List<String> classNames = codeParser.classNames;
         HashSet<String> set = codeParser.importItems;
 
-        FilePathFindUtil.findImportPathOfMessage(searchPath,"IDcardOcrReq");
+        List<String> ret = FilePathFindUtil.findImportPathOfMessage(searchPath,"UserInfo");
 
 
 
