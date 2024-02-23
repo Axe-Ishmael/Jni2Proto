@@ -2,6 +2,7 @@ package constants
 
 import model.ParamTypePair
 
+
 class JniToProtoTypeMapKt {
     companion object{
 
@@ -14,6 +15,14 @@ class JniToProtoTypeMapKt {
             this.put("double","optional double")
             this.put("char","optional string")
             this.put("byte[]","optional bytes")
+
+            this.put("Integer","optional uint32")
+            this.put("Long","optional uint64")
+            this.put("Boolean","optional bool")
+            this.put("Float","optional float")
+            this.put("Double","optional double")
+            this.put("Character","optional string")
+            this.put("Byte[]","optional bytes")
         }
 
         val basicTypeMap = HashMap<String,String>().apply {
@@ -24,6 +33,14 @@ class JniToProtoTypeMapKt {
             this.put("float","float")
             this.put("double","double")
             this.put("char","string")
+
+            this.put("Integer","uint32")
+            this.put("Long","uint64")
+            this.put("Boolean","bool")
+            this.put("Float","float")
+            this.put("Double","double")
+            this.put("Character","string")
+            this.put("Byte[]","bytes")
         }
 
 
@@ -54,31 +71,54 @@ class JniToProtoTypeMapKt {
          * JNI type转化为对应的ProtoType
          * optional XXX 或者 repeated XXX
          */
-        fun convertJniTypeToProtoType(paramType: String): String {
+        fun convertJniTypeToProtoType(paramType: String): ArrayList<String> {
             val hashMap = getJniType2ProtoTypeMap()
             val getValue = hashMap[paramType]
 
+            val ret = ArrayList<String>()
+
             if (getValue != null) {
-                return getValue
+                ret.apply {
+                    add(getValue)
+                }
+                return ret
             }
 
             if (paramType.contains("List<")){
                 val fanxin = extractListFanxinType(paramType)
                 if (fanxin != ""){
-                    return "repeated "+ checkTypeInProto(fanxin)
+                    ret.apply {
+                        add("repeated "+ checkTypeInProto(fanxin))
+                    }
+                    return ret
                 }else{
                     throw RuntimeException("Error: List Fanxin Type is null!")
                 }
             }else if (paramType.contains("[")){
                 val arrayType = extractArrayType(paramType)
                 if (arrayType != ""){
-                    return "repeated "+ checkTypeInProto(arrayType)
+                    ret.apply {
+                        add("repeated "+ checkTypeInProto(arrayType))
+                    }
+                    return ret
                 }else{
                     throw RuntimeException("Error: Array Type is null!")
                 }
+            }else if (paramType.startsWith("Pair<")){
+                val pairTypeList = extractPairType(paramType)
+                pairTypeList.forEach { str ->
+                    convertJniTypeToProtoType(str).forEach{
+                        ret.add(it);
+                    }
+                }
+
+                return ret
+
             }
 
-            return "optional "+extractSubstringAfterLastDot(paramType)
+            ret.add("optional "+extractSubstringAfterLastDot(paramType))
+
+            return ret
         }
 
         /**
@@ -119,6 +159,20 @@ class JniToProtoTypeMapKt {
 
             return ""
 
+        }
+
+
+        fun extractPairType(typeString:String):List<String>{
+            val start = typeString.indexOf('<') + 1
+            val end = typeString.lastIndexOf('>')
+
+            var genericType = "";
+            if (start != 0 && end != -1) {
+                genericType = typeString.substring(start, end)
+            }
+
+            val ret = genericType.split(",").map { it -> it.trim() }
+            return ret
         }
 
 
@@ -174,22 +228,56 @@ class JniToProtoTypeMapKt {
         /**
          * 对于有泛型的Interface，interface X <A,B,C> 提取出 A,B,C
          * 注意此处返回值可以为 null
+         *
+         * todo  此处无法处理ICallback<Pair<A,b> , String> 这种情况，主要是Pair<A，B> 没办法被完整提取出来
+         *
          */
-        fun extractAppliedFanxinType(fanxinType: String):List<String>?{
-            val startIndex = fanxinType.indexOf("<")
+//        fun extractAppliedFanxinType(fanxinType: String):List<String>?{
+//            val startIndex = fanxinType.indexOf("<")
+//
+//            val endIndex = fanxinType.lastIndexOf(">")
+//
+//            if (startIndex ==-1 || endIndex == -1){
+//                return null
+//            }
+//
+//            val insideBrackets = fanxinType.substring(startIndex+1,endIndex)
+//
+//            val appliedFanxinTypeList = insideBrackets.split(",").map { param ->param.trim() }
+//
+//            return appliedFanxinTypeList
+//
+//        }
 
-            val endIndex = fanxinType.indexOf(">")
+        fun extractAppliedFanxinType(genericTypeExpression: String): List<String> {
+            val types: MutableList<String> = ArrayList()
+            var depth = 0
+            var startIndex = -1
 
-            if (startIndex ==-1 || endIndex == -1){
-                return null
+            // 遍历字符串，使用计数器来处理嵌套的尖括号
+            for (i in 0 until genericTypeExpression.length) {
+                val ch = genericTypeExpression[i]
+                if (ch == '<') {
+                    if (depth == 0) {
+                        startIndex = i + 1 // 记录第一个尖括号后的位置
+                    }
+                    depth++
+                } else if (ch == '>') {
+                    depth--
+                    if (depth == 0) {
+                        // 当回到最外层尖括号时，提取内部的字符串
+                        val type = genericTypeExpression.substring(startIndex, i).trim { it <= ' ' }
+                        types.add(type)
+                    }
+                } else if (ch == ',' && depth == 1) {
+                    // 当在最外层尖括号内遇到逗号时，提取前一个类型
+                    val type = genericTypeExpression.substring(startIndex, i).trim { it <= ' ' }
+                    types.add(type)
+                    startIndex = i + 1 // 更新下一个类型的起始位置
+                }
             }
 
-            val insideBrackets = fanxinType.substring(startIndex+1,endIndex)
-
-            val appliedFanxinTypeList = insideBrackets.split(",").map { param ->param.trim() }
-
-            return appliedFanxinTypeList
-
+            return types
         }
 
 

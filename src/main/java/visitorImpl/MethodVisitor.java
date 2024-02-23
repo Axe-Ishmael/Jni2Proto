@@ -65,9 +65,11 @@ public class MethodVisitor extends VoidVisitorAdapter<Void> {
                 String paramType = parameter.getTypeAsString();
                 String paramName = parameter.getNameAsString();
 
-                String paramTypeConvert = JniToProtoTypeMapKt.Companion.convertJniTypeToProtoType(paramType);
 
                 String callbackType = JniToProtoTypeMapKt.Companion.getCallbackType(paramType);
+
+
+                List<String> paramTypeConvertList = JniToProtoTypeMapKt.Companion.convertJniTypeToProtoType(paramType);
 
                 if (callbackMap.containsKey(callbackType)){
                     findImportItemInParamTypePairListOfCallback(callbackMap.get(paramType));
@@ -78,25 +80,31 @@ public class MethodVisitor extends VoidVisitorAdapter<Void> {
 
                         FanxinInterfaceParamTypeInfo info = fanxinCallbackMap.get(callbackType);
                         List<ParamTypePair> paramTypePairList = info.getParamTypeList();
-                        List<String> callbackFanxinTypeList = info.getStatedFanxinTypeList();
+                        List<String> statedCallbackFanxinTypeList = info.getStatedFanxinTypeList();
 
-                        if (appliedFanxinTypeList.size() != callbackFanxinTypeList.size()){
+                        if (appliedFanxinTypeList.size() != statedCallbackFanxinTypeList.size()){
                             throw new RuntimeException("Error: Fanxin Interface TypeList Size not match!");
                         }
 
                         int size = appliedFanxinTypeList.size();
 
 
-                        for (int i = 0;i<size;i++){
-                            String statedFanxinType = callbackFanxinTypeList.get(i);
+                        for (int i = 0; i<size; i++){
+                            String statedFanxinType = statedCallbackFanxinTypeList.get(i);
                             String appliedFanxinType = appliedFanxinTypeList.get(i);
 
                             ParamTypePair statedFanxinTypePair =  JniToProtoTypeMapKt.Companion.findCorrectStatedFanxinTypePair(paramTypePairList,statedFanxinType);
 
-                            String convertTypeStr = JniToProtoTypeMapKt.Companion.convertJniTypeToProtoType(appliedFanxinType);
+                            String statedFanxinParamName = statedFanxinTypePair.getParamName();
 
-                            if (statedFanxinTypePair != null){
-                                statedFanxinTypePair.setParamType(convertTypeStr);
+                            List<String> convertTypeStrList = JniToProtoTypeMapKt.Companion.convertJniTypeToProtoType(appliedFanxinType);
+
+                            if (statedFanxinTypePair != null) {
+                                paramTypePairList.remove(statedFanxinTypePair);
+                            }
+
+                            for (String convertTypeStr : convertTypeStrList) {
+                                paramTypePairList.add(new ParamTypePair(convertTypeStr,statedFanxinParamName));
                             }
                         }
 
@@ -106,11 +114,13 @@ public class MethodVisitor extends VoidVisitorAdapter<Void> {
 
 
                 }else {
-                    String mainType = JniToProtoTypeMapKt.Companion.getMainType(paramTypeConvert);
-                    if(!JniToProtoTypeMapKt.Companion.getBasicProtoTypeMap().containsKey(mainType)){
-                        importItems.add(mainType);
+                    for (String paramTypeConvert : paramTypeConvertList) {
+                        String mainType = JniToProtoTypeMapKt.Companion.getMainType(paramTypeConvert);
+                        if(!JniToProtoTypeMapKt.Companion.getBasicProtoTypeMap().containsKey(mainType)){
+                            importItems.add(mainType);
+                        }
+                        methodSourceInfoDetail.getRequestInfo().add(new ParamTypePair(paramTypeConvert,paramName));
                     }
-                    methodSourceInfoDetail.getRequestInfo().add(new ParamTypePair(paramTypeConvert,paramName));
                 }
 
             }

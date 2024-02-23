@@ -62,13 +62,15 @@ public class InterfaceVisitorForInitCallbackMap extends VoidVisitorAdapter<Void>
                     String paramName = parameter.getNameAsString();
                     String paramType = parameter.getTypeAsString();
 
-                    String paramTypeConvert = JniToProtoTypeMapKt.Companion.convertJniTypeToProtoType(paramType);
-                    String mainType = JniToProtoTypeMapKt.Companion.getMainType(paramTypeConvert);
+                    List<String> paramTypeConvertList = JniToProtoTypeMapKt.Companion.convertJniTypeToProtoType(paramType);
+                    for (String paramTypeConvert:paramTypeConvertList) {
+                        String mainType = JniToProtoTypeMapKt.Companion.getMainType(paramTypeConvert);
 
-                    if (!JniToProtoTypeMapKt.Companion.getJniType2ProtoTypeMap().containsKey(mainType)){
-//                    importItems.add(JniToProtoTypeMapKt.Companion.extractSubstringAfterLastDot(mainType));//init callback 不需要把ImportedItem加进来，因为不一定会用
+                        if (!JniToProtoTypeMapKt.Companion.getJniType2ProtoTypeMap().containsKey(mainType)){
+    //                    importItems.add(JniToProtoTypeMapKt.Companion.extractSubstringAfterLastDot(mainType));//init callback 不需要把ImportedItem加进来，因为不一定会用
+                        }
+                        list.add(new ParamTypePair(paramTypeConvert,paramName));
                     }
-                    list.add(new ParamTypePair(paramTypeConvert,paramName));
                 }
 
                 FanxinInterfaceParamTypeInfo info = new FanxinInterfaceParamTypeInfo(list,fanxinTypeList);
@@ -91,13 +93,15 @@ public class InterfaceVisitorForInitCallbackMap extends VoidVisitorAdapter<Void>
                     String paramName = parameter.getNameAsString();
                     String paramType = parameter.getTypeAsString();
 
-                    String paramTypeConvert = JniToProtoTypeMapKt.Companion.convertJniTypeToProtoType(paramType);
-                    String mainType = JniToProtoTypeMapKt.Companion.getMainType(paramTypeConvert);
+                    List<String> paramTypeConvertList = JniToProtoTypeMapKt.Companion.convertJniTypeToProtoType(paramType);
+                    for (String paramTypeConvert : paramTypeConvertList){
+                        String mainType = JniToProtoTypeMapKt.Companion.getMainType(paramTypeConvert);
 
-                    if (!JniToProtoTypeMapKt.Companion.getJniType2ProtoTypeMap().containsKey(mainType)){
+                        if (!JniToProtoTypeMapKt.Companion.getJniType2ProtoTypeMap().containsKey(mainType)){
 //                    importItems.add(JniToProtoTypeMapKt.Companion.extractSubstringAfterLastDot(mainType));//init callback 不需要把ImportedItem加进来，因为不一定会用
+                        }
+                        list.add(new ParamTypePair(paramTypeConvert,paramName));
                     }
-                    list.add(new ParamTypePair(paramTypeConvert,paramName));
                 }
 
                 interfacesMap.put(interfaceName,list);
